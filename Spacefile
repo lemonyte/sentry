@@ -1,0 +1,19 @@
+# Spacefile Docs: https://go.deta.dev/docs/spacefile/v0
+v: 0
+micros:
+  - name: sentry
+    src: ./
+    engine: svelte-kit
+    primary: true
+    dev: npm run dev
+    public_routes:
+      - /dashboard
+      - /domains
+      - /stats
+    presets:
+      api_keys: true
+    # actions:
+    #   - id: refresh
+    #     name: Refresh domains
+    #     trigger: schedule
+    #     default_interval: "*/5 * * * *"
