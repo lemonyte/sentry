@@ -1,29 +1,37 @@
 import { Base } from "deta";
 
 export enum DomainStatus {
-    active = "Active",
-    inactive = "Inactive",
-    unknown = "Unknown",
+    active = "active",
+    inactive = "inactive",
+    unknown = "unknown",
 }
 
 export enum ThreatType {
-    malware = "Malware",
-    phishing = "Phishing",
-    scam = "Scam",
-    c2 = "C&C Server",
-    crypto_drainer = "Crypto drainer",
-    unknown = "Unknown",
+    malware = "malware",
+    phishing = "phishing",
+    scam = "scam",
+    c2 = "c2",
+    crypto_drainer = "crypto_drainer",
+    unknown = "unknown",
 }
 
 export type Domain = {
-    key: string;
     domain: string;
     url: string;
+    host?: string;
     threat_type: ThreatType;
-    host: string;
     status: DomainStatus;
     created_at: number;
     updated_at: number;
+    key: string;
+};
+
+export type DomainDataInput = {
+    domain: string;
+    url?: string;
+    host?: string;
+    threat_type?: ThreatType;
+    status?: DomainStatus;
 };
 
 export const getDatabase = () => {
@@ -36,20 +44,22 @@ export const getDomains = async (params?: { status: DomainStatus }) => {
     return data.items as Domain[];
 };
 
-export const putDomains = async (domains: { domain: string; url: string; threat_type: ThreatType, host: string }[]) => {
+export const putDomains = async (domains: DomainDataInput[]) => {
     const now = Math.floor(Date.now() / 1000);
     const data: Domain[] = domains.map((domain) => ({
-        ...domain,
-        key: domain.domain,
-        status: DomainStatus.active,
+        url: `https://${domain.domain}`,
+        threat_type: ThreatType.unknown,
+        status: DomainStatus.unknown,
         created_at: now,
         updated_at: now,
+        key: domain.domain,
+        ...domain,
     }));
     const db = getDatabase();
     await db.putMany(data);
 };
 
-export const updateDomain = async (domain: { domain: string; status: DomainStatus; threat_type?: ThreatType }) => {
+export const updateDomain = async (domain: DomainDataInput) => {
     const now = Math.floor(Date.now() / 1000);
     const db = getDatabase();
     await db.update({ ...domain, updated_at: now }, domain.domain);
