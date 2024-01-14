@@ -127,7 +127,7 @@
         <TableBody>
             {#each $sortedItems as domain}
                 <TableBodyRow>
-                    <TableBodyCell><a href={domain.url}>{domain.domain}</a></TableBodyCell>
+                    <TableBodyCell><a href={domain.url} class="hover:text-primary-500 transition-all">{domain.domain}</a></TableBodyCell>
                     <TableBodyCell>
                         <Badge
                             color={domain.status === DomainStatus.inactive
