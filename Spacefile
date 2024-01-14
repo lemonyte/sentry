@@ -10,6 +10,7 @@ micros:
       - /dashboard
       - /domains
       - /stats
+      - /api/domains
     presets:
       api_keys: true
     # actions:
