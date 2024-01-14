@@ -13,6 +13,7 @@
                     <th>Domain</th>
                     <th>Status</th>
                     <th>Threat type</th>
+                    <th>Host</th>
                     <th>Created</th>
                     <th>Last updated</th>
                 </tr>
@@ -23,6 +24,7 @@
                         <td><a href={domain.url}>{domain.domain}</a></td>
                         <td>{domain.status}</td>
                         <td>{domain.threat_type}</td>
+                        <td>{domain.host}</td>
                         <td>{relativeTimeFromDate(new Date(domain.created_at * 1000))}</td>
                         <td>{relativeTimeFromDate(new Date(domain.updated_at * 1000))}</td>
                     </tr>
