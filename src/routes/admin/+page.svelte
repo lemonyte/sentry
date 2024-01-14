@@ -55,12 +55,14 @@
         const sorted = [...$sortedItems].sort((a, b) => {
             const aVal = a[key];
             const bVal = b[key];
-            if (!aVal || !bVal) {
-                return 0;
+            if (!aVal) {
+                return -direction;
+            } else if (!bVal) {
+                return direction;
             }
             if (aVal < bVal) {
                 return -direction;
-            } else if (aVal > bVal) {
+            } else if (bVal < aVal) {
                 return direction;
             }
             return 0;
