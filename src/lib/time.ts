@@ -6,6 +6,7 @@ const units: { unit: Intl.RelativeTimeFormatUnit; ms: number }[] = [
     { unit: "minute", ms: 60000 },
     { unit: "second", ms: 1000 },
 ];
+
 const rtf = new Intl.RelativeTimeFormat("en", { numeric: "auto", style: "narrow" });
 
 export const relativeTimeFromDate = (relative: Date | null, pivot: Date = new Date()): string => {
