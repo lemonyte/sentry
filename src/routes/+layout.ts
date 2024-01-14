@@ -1,7 +1,7 @@
 import { getDomains } from "$lib/database";
-import type { PageLoad } from "./$types";
+import type { LayoutLoad } from "./$types";
 
-export const load: PageLoad = async () => {
+export const load: LayoutLoad = async () => {
     const domains = await getDomains();
     return {
         domains: domains,
