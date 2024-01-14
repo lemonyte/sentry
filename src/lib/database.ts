@@ -7,9 +7,12 @@ export enum DomainStatus {
 }
 
 export enum ThreatType {
-    malware = "malware",
-    phishing = "phishing",
-    unknown = "unknown",
+    malware = "Malware",
+    phishing = "Phishing",
+    scam = "Scam",
+    c2 = "C&C Server",
+    crypto_drainer = "Crypto drainer",
+    unknown = "Unknown",
 }
 
 export type Domain = {
