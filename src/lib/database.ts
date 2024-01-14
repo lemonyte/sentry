@@ -1,9 +1,9 @@
 import { Base } from "deta";
 
 export enum DomainStatus {
-    active = "active",
-    inactive = "inactive",
-    unknown = "unknown",
+    active = "Active",
+    inactive = "Inactive",
+    unknown = "Unknown",
 }
 
 export enum ThreatType {
