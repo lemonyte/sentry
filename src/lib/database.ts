@@ -17,6 +17,7 @@ export type Domain = {
     domain: string;
     url: string;
     threat_type: ThreatType;
+    host: string;
     status: DomainStatus;
     created_at: number;
     updated_at: number;
@@ -32,7 +33,7 @@ export const getDomains = async (params?: { status: DomainStatus }) => {
     return data.items as Domain[];
 };
 
-export const putDomains = async (domains: { domain: string; url: string; threat_type: ThreatType }[]) => {
+export const putDomains = async (domains: { domain: string; url: string; threat_type: ThreatType, host: string }[]) => {
     const now = Math.floor(Date.now() / 1000);
     const data: Domain[] = domains.map((domain) => ({
         ...domain,
