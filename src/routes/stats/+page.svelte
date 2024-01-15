@@ -18,6 +18,12 @@
         </p>
     </Card>
     <Card>
+        <h3>Unknown domains</h3>
+        <p class="text-yellow-500">
+            {data.domains.filter((domain) => domain.status === DomainStatus.unknown).length}
+        </p>
+    </Card>
+    <Card>
         <h3>Domains actioned</h3>
         <p class="text-green-500">TODO</p>
     </Card>
