@@ -1,24 +1,24 @@
 import { Base } from "deta";
 
 export enum DomainStatus {
+    unknown = "unknown",
     active = "active",
     inactive = "inactive",
-    unknown = "unknown",
 }
 
 export enum ThreatType {
+    unknown = "unknown",
     malware = "malware",
     phishing = "phishing",
     scam = "scam",
     c2 = "c2",
     crypto_drainer = "crypto_drainer",
-    unknown = "unknown",
 }
 
 export type Domain = {
     domain: string;
     url: string;
-    host?: string;
+    host: string;
     threat_type: ThreatType;
     status: DomainStatus;
     created_at: number;
@@ -29,9 +29,23 @@ export type Domain = {
 export type DomainDataInput = {
     domain: string;
     url?: string;
-    host?: string;
-    threat_type?: ThreatType;
-    status?: DomainStatus;
+    host?: string | null;
+    threat_type?: ThreatType | null;
+    status?: DomainStatus | null;
+};
+
+const inputToDomain = (input: DomainDataInput): Domain => {
+    const now = Math.floor(Date.now() / 1000);
+    return {
+        domain: input.domain,
+        url: input.url || `https://${input.domain}`,
+        host: input.host || "",
+        threat_type: input.threat_type || ThreatType.unknown,
+        status: input.status || DomainStatus.unknown,
+        created_at: now,
+        updated_at: now,
+        key: input.domain,
+    };
 };
 
 export const getDatabase = () => {
@@ -44,19 +58,10 @@ export const getDomains = async (params?: { status: DomainStatus }) => {
     return data.items as Domain[];
 };
 
-export const putDomains = async (domains: DomainDataInput[]) => {
-    const now = Math.floor(Date.now() / 1000);
-    const data: Domain[] = domains.map((domain) => ({
-        url: `https://${domain.domain}`,
-        threat_type: ThreatType.unknown,
-        status: DomainStatus.unknown,
-        created_at: now,
-        updated_at: now,
-        key: domain.domain,
-        ...domain,
-    }));
+export const putDomains = async (data: DomainDataInput[]) => {
+    const domains = data.map((input) => inputToDomain(input));
     const db = getDatabase();
-    await db.putMany(data);
+    await db.putMany(domains);
 };
 
 export const updateDomain = async (domain: DomainDataInput) => {
