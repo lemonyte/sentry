@@ -2,24 +2,37 @@
     import type { PageData } from "./$types";
     import { relativeTimeFromDate } from "$lib/time";
     import type { Domain } from "$lib/database";
-    import { DomainStatus } from "$lib/database";
+    import { DomainStatus, ThreatType } from "$lib/database";
     import {
+        Table,
         TableBody,
         TableBodyCell,
         TableBodyRow,
         TableHead,
         TableHeadCell,
-        TableSearch,
         Indicator,
         Badge,
+        Input,
+        MultiSelect,
     } from "flowbite-svelte";
     import { writable } from "svelte/store";
 
     export let data: PageData;
 
-    let searchTerm = "";
+    let filter = {
+        domain: "",
+        url: "",
+        host: "",
+        threatTypes: [] as ThreatType[],
+        statuses: [] as DomainStatus[],
+    };
     $: filteredItems = data.domains.filter(
-        (domain) => domain.domain.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1,
+        (domain) =>
+            domain.domain.toLowerCase().indexOf(filter.domain.toLowerCase()) !== -1 &&
+            domain.url.toLowerCase().indexOf(filter.url.toLowerCase()) !== -1 &&
+            domain.host.toLowerCase().indexOf(filter.host.toLowerCase()) !== -1 &&
+            (filter.threatTypes.length === 0 || filter.threatTypes.includes(domain.threat_type)) &&
+            (filter.statuses.length === 0 || filter.statuses.includes(domain.status)),
     );
 
     const sortKey = writable<keyof Domain>("created_at"); // default sort key
@@ -43,12 +56,9 @@
         const sorted = [...$sortedItems].sort((a, b) => {
             const aVal = a[key];
             const bVal = b[key];
-            if (!aVal || !bVal) {
-                return 0;
-            }
             if (aVal < bVal) {
                 return -direction;
-            } else if (aVal > bVal) {
+            } else if (bVal < aVal) {
                 return direction;
             }
             return 0;
@@ -57,8 +67,24 @@
     }
 </script>
 
-<div class="flex flex-col items-center min-h-screen">
-    <TableSearch placeholder="Search domains" striped={true} bind:inputValue={searchTerm}>
+<div class="flex flex-row space-x-4 px-16">
+    <div class="flex flex-col space-y-2 h-min sticky top-1">
+        <h3 class="text-xl">Filters</h3>
+        <Input placeholder="Domain" bind:value={filter.domain} />
+        <Input placeholder="URL" bind:value={filter.url} />
+        <Input placeholder="Host" bind:value={filter.host} />
+        <MultiSelect
+            placeholder="Threat type"
+            bind:value={filter.threatTypes}
+            items={Object.entries(ThreatType).map(([key, value]) => ({ value: key, name: value }))}
+        />
+        <MultiSelect
+            placeholder="Status"
+            bind:value={filter.statuses}
+            items={Object.entries(DomainStatus).map(([key, value]) => ({ value: key, name: value }))}
+        />
+    </div>
+    <Table striped={true} divClass="flex-grow flex-shrink">
         <TableHead>
             <TableHeadCell
                 class="dark:hover:text-white transition-all cursor-pointer"
@@ -70,9 +96,7 @@
             >
             <TableHeadCell
                 class="dark:hover:text-white transition-all cursor-pointer"
-                on:click={() => sortTable("threat_type")}>
-                Threat type
-                </TableHeadCell
+                on:click={() => sortTable("threat_type")}>Threat type</TableHeadCell
             >
             <TableHeadCell
                 class="dark:hover:text-white transition-all cursor-pointer"
@@ -90,7 +114,10 @@
         <TableBody>
             {#each $sortedItems as domain}
                 <TableBodyRow>
-                    <TableBodyCell><a href={domain.url}>{domain.domain}</a></TableBodyCell>
+                    <TableBodyCell
+                        ><a href={domain.url} class="hover:text-primary-500 transition-all">{domain.domain}</a
+                        ></TableBodyCell
+                    >
                     <TableBodyCell>
                         <Badge
                             color={domain.status === DomainStatus.inactive
@@ -108,7 +135,9 @@
                                       : "gray"}
                                 size="xs"
                                 class="me-1"
-                            />{domain.status ? domain.status.charAt(0).toUpperCase() + domain.status.substring(1) : "Unknown"}
+                            />{domain.status
+                                ? domain.status.charAt(0).toUpperCase() + domain.status.substring(1)
+                                : "Unknown"}
                         </Badge>
                     </TableBodyCell>
                     <TableBodyCell>
@@ -124,5 +153,5 @@
                 </TableBodyRow>
             {/each}
         </TableBody>
-    </TableSearch>
+    </Table>
 </div>
