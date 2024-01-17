@@ -84,7 +84,12 @@
             items={Object.entries(DomainStatus).map(([key, value]) => ({ value: key, name: value }))}
         />
     </div>
-    <Table striped={true} divClass="flex-grow flex-shrink">
+    <Table striped={true}>
+        <caption class="p-2 text-lg font-semibold text-left text-gray-900 bg-white dark:text-white dark:bg-gray-800">
+            <p class="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">
+                Loaded {$sortedItems.length} entries.
+            </p>
+        </caption>
         <TableHead>
             <TableHeadCell
                 class="dark:hover:text-white transition-all cursor-pointer"
